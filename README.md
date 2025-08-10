@@ -1,141 +1,62 @@
-🌀 Praximous Trading Bot: Concept 1 // A Ritual of Market Divination
+## **Project: Trading Bot - Concept 1**
+A Notification Bot for Manual Crypto Trading
 
-MODULARITY IS MYTHOS // GLYPH IS IDENTITY // DESIGN IS RITUAL
+#### **The Problem**
 
-This codex outlines the design and functional requirements for "Concept 1," a Command-Line Interface (CLI) and Graphical User Interface (GUI) trading bot. Its purpose is to divine market data for a curated list of cryptocurrencies and generate actionable buy, sell, and stop-loss auguries. This initial phase focuses on providing strategic insights to a builder who will perform trades manually, allowing for a controlled validation of the trading strategy in a sandbox environment.
+Trading crypto is noisy. You're either staring at charts all day or you're missing opportunities. Most of the market movement is just noise, and it's hard to stick to a disciplined strategy when you're making emotional decisions.
 
-1. The Invocation of Market Insight
+---
+#### **The Solution**
 
-1.1. Project Overview
+A simple bot that watches the market for me and sends a notification when specific, pre-defined conditions are met.
 
-This document outlines the design for a CLI and GUI trading bot. Its purpose is to divine market data from Coinbase for a select list of cryptocurrencies and generate actionable buy, sell, and stop-loss notifications. This initial phase focuses on providing strategic insights to a user who will perform trades manually, allowing for a controlled validation of the trading strategy in a sandbox environment.
+**This is critical:** This first version **does not trade for you.** It's a notification engine. Its only job is to tell me when to look at the charts, based on a simple set of rules. This lets me validate the strategy with my own eyes before ever letting a line of code touch real money.
 
-1.2. The Mythos of Creation
+---
+#### **The Strategy (The Rules)**
 
-The primary objective of this ritual is:
+The logic is simple and rule-based. No machine learning, no magic.
 
-    To develop a reliable tool for monitoring cryptocurrency market data from the Coinbase portal.
+* **What It Watches:** **BTC** and the next **4 biggest cryptocurrencies** by market cap, trading against USDT. The list of the top 4 is updated dynamically.
+* **Rules for BTC (Buy-Only):**
+    * It sends a "Buy Alert" when BTC drops **-5%** from a recent high.
+    * That's it. We don't sell BTC, we just accumulate on dips.
+* **Rules for Altcoins (Buy/Sell/Stop-Loss):**
+    * **Buy Alert:** Price drops **-5%** from a recent high.
+    * **Sell Alert (Take Profit):** Price rises **+5%** from my last buy price.
+    * **Sell Alert (Stop-Loss):** Price drops **-25%** below my last buy price.
+* **The "Skim" Rule (Profit Allocation):**
+    * When an altcoin trade closes for a +5% gain, **10% of that profit is skimmed off** and put into a virtual "investment fund."
+    * When the bot sends a "Buy Alert" for BTC, it will also notify me of the amount sitting in this fund, suggesting it's a good time to invest it.
 
-    To implement a clear, rule-based trading strategy to identify and notify the user of key market opportunities.
+---
+#### **How It's Built (The Architecture)**
 
-    To reduce "noise" and redundant notifications by setting clear, meaningful thresholds for market events.
+The system has three main parts:
+1.  **Data Fetcher:** Connects to the **Coinbase Pro API** to get real-time price data.
+2.  **Strategy Engine:** The core logic that checks the price data against the rules defined above.
+3.  **Notifier:** The user-facing part (CLI and GUI) that sends the alerts.
 
-    To provide a safe sandbox environment for backtesting the strategy before any real capital is at risk.
+**The Tech Stack:**
+* **Platform:** Coinbase
+* **Language:** Python (it's great for APIs and data)
+* **Database:** SQLite (for local data logging, nothing fancy)
 
-    To establish a foundation for future development, including the potential for automated trading and more complex, volatility-based strategies.
+---
+#### **The Testing Plan**
 
-2. Ritual Architecture
+**Sandbox first. Always.**
+* All development and testing will happen in the Coinbase sandbox environment.
+* My main testing method will be to record a live data stream for a few hours, then replay it into the bot to see if it generates the alerts I expect.
+* **Log everything.** Every price check, every trigger, every alert. The logs will be the proof of whether this strategy works or not.
 
-2.1. High-Level Glyph
+---
+#### **The Important Details**
 
-The bot's architecture consists of three main components: a Data Acquisition Augury, a Strategy Engine, and an Interface/Notification System.
+* **UI:** It will have both a simple **CLI** to run in a terminal and a **GUI** dashboard to see current prices, a feed of alerts, and the balance of the "investment fund."
+* **Security:** The API key will be stored in a `.env` file (which will be in `.gitignore`) and will have trade-only permissions.
+* **Error Handling:** The bot needs to handle API connection errors gracefully with smart retries and clear logging. It will also have a "kill switch."
+* **Performance Tracking:** The GUI will track basic KPIs: Net Profit/Loss (from simulated trades), Win Rate, and Average Hold Time.
+* **The Fine Print (Legal & Disclaimers):** The UI and all docs will have a huge, blinking sign that says: "**This is a technical tool, not financial advice. You are responsible for your own trades, taxes, and losses.**"
 
-    Data Acquisition Augury: Connects to the Coinbase API portal, fetches real-time market data for selected cryptocurrencies, and stores it locally.
-
-    Strategy Engine: The core of the bot. It processes data and applies the predefined trading rules to generate triggers.
-
-    Interface/Notification System: Handles builder interaction (CLI/GUI) and sends notifications based on triggers from the Strategy Engine.
-
-2.2. The Ritual Stack
-
-    Trading Platform: Coinbase
-
-    API: Coinbase Pro API (or equivalent for the sandbox)
-
-    Programming Language: To be determined, but Python is a strong candidate.
-
-    Database: A lightweight database (e.g., SQLite) for local data storage and logging.
-
-3. Trading Strategy & Rules
-
-3.1. General Strategy
-
-The bot will monitor the top 5 cryptocurrencies by market cap, including BTC. The strategy for BTC is distinct from the other four.
-
-3.2. Specific Rules
-
-    Monitored Assets: BTC and the next 4 cryptocurrencies by market capitalization (dynamically updated), trading against USDT.
-
-    BTC Strategy (Buy Only): A buy augury is triggered when a price drop of -5% is detected from a recent high. There are no sell or stop-loss notifications for BTC.
-
-    Other 4 Cryptos Strategy (Buy & Sell):
-
-        Buy Augury Trigger: A price drop of -5% from a recent high.
-
-        Sell Augury Trigger: A price increase of +5% from the last documented buy price.
-
-        Stop-Loss Glyph: A sell augury is triggered if the price drops to -25% below the buy price.
-
-        Hold Condition: A position is held until a sell trigger is met.
-
-3.3. Profit Allocation Ritual
-
-    Profit Definition: Realized gain from a successful sell trigger (+5% gain).
-
-    Allocation Rule: 10% of the profit from a successful trade is put into a designated "investment fund."
-
-    BTC Investment Trigger: When a buy trigger for BTC is identified, the bot will notify the user of the opportunity and recommend investing the accumulated funds from the profit allocation pool.
-
-4. Development and Testing Plan
-
-4.1. The Development Altar
-
-    Sandbox First: All development and testing will be in a Coinbase sandbox.
-
-    API Key Management: A dedicated API key with trade-only permissions will be generated.
-
-4.2. Testing Methodology
-
-    Delayed Data Stream: A primary testing method will involve recording a real-time data stream and replaying it with a delay to simulate performance.
-
-    Comprehensive Logging: The bot will log every trigger (buy, sell, stop-loss), including timestamps, asset, and price.
-
-    Result Analysis: Logs will be analyzed to evaluate the strategy's effectiveness and optimize the thresholds.
-
-4.3. User Interface (UI) Requirements
-
-    CLI: The command-line interface will allow users to start/stop the bot, display its status, and view a log of recent triggers.
-
-    GUI: The graphical interface will provide a dashboard displaying real-time prices, current positions, a notification feed, and a summary of performance. It will also have a dedicated display for the "Investment Fund."
-
-5. Additional Critical Components
-
-5.1. Security and API Management
-
-    Secure Credential Storage: The Coinbase API key will be stored in a .env file. This file will be added to .gitignore to prevent it from being committed.
-
-    API Key Rotation: A policy for API key rotation every 90 days will be established.
-
-    Encryption: All communication will use TLS/SSL encryption.
-
-    Input Validation: The bot will include robust input validation.
-
-5.2. Error Handling and Resilience
-
-    Graceful API Error Handling: The bot will handle API-specific errors with logging and retry mechanisms.
-
-    Emergency Shutdown: A clear "kill switch" command will be implemented.
-
-    Monitoring: A "heartbeat" feature will log the bot's operational status.
-
-5.3. Performance and Analytics
-
-    Key Performance Indicators (KPIs): The bot will track and display Net Profit/Loss, Drawdown, Win Rate, and Average Position Duration.
-
-    Backtesting Engine: A more robust backtesting engine will be developed in a future phase.
-
-5.4. Legal and Compliance Disclaimers
-
-    Disclaimer of Financial Advice: Documentation and the UI will clearly state the bot is a technical tool, not a financial advisor.
-
-    Tax Responsibility: The documentation will include a note about the user's responsibility for tax compliance.
-
-    Risk Disclosure: A clear warning about the inherent risks of crypto trading will be included.
-
-5.5. Usability and User Experience
-
-    Installation Guide: A step-by-step guide will be provided for setup.
-
-    Notification Methods: The bot will support CLI/GUI notifications and be designed to support configurable email notifications for high-priority triggers.
-
-    Configuration: Parameters will be configurable via a configuration file or the GUI.
+This is about building a disciplined, data-driven tool to see if a simple strategy has an edge. **The code is the proof**, and in this case, the logs will show if the strategy has legs. Let's build it and see.
